@@ -80,6 +80,27 @@ info:
   title: My API
   version: "1.0"
 paths:
+  /api/author:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает список всех авторов
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.AuthorResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Получить всех авторов
+      tags:
+      - authors
   /api/book:
     get:
       consumes:

@@ -49,7 +49,7 @@ func FromDomainToBookModel(b *domainModel.Book) *gormModel.Book {
 	}
 }
 
-func FromRequestToDomain(b *dto.BookRequest) *domainModel.Book {
+func FromRequestToDomainBook(b *dto.BookRequest) *domainModel.Book {
 	return &domainModel.Book{
 		Title:       b.Title,
 		Description: b.Description,

@@ -1,1 +1,38 @@
 package author
+
+import (
+	"github.com/labstack/echo/v4"
+	"go_library/internal/api/dto"
+	"go_library/internal/domain/author"
+	"go_library/internal/utils/mapper"
+	"net/http"
+)
+
+type AuthorHandler struct {
+	service author.AuthorService
+}
+
+// GetAllAuthors godoc
+// @Summary Получить всех авторов
+// @Description Возвращает список всех авторов
+// @Tags authors
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.AuthorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/author [get]
+func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
+	authors, err := h.service.GetAllAuthors()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get authors"})
+	}
+	response := make([]*dto.AuthorResponse, 0)
+	for _, value := range authors {
+		response = append(response, mapper.FromDomainToResponseAuthor(value))
+	}
+	return c.JSON(http.StatusOK, response)
+}
+
+func NewAuthorHandler(service author.AuthorService) *AuthorHandler {
+	return &AuthorHandler{service: service}
+}
