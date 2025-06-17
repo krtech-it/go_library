@@ -13,11 +13,20 @@ type BookHandler struct {
 	service book.BookService
 }
 
+// GetAllBooks godoc
+// @Summary Получить все книги
+// @Description Возвращает список всех книг с автором и мета-данными
+// @Tags books
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.BookResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/book [get]
 func (h *BookHandler) GetAllBooks(c echo.Context) error {
 	log.Info("Get all books")
 	books, err := h.service.GetAllBooks()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get books"})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get books"})
 	}
 	response := make([]*dto.BookResponse, 0)
 	for _, value := range books {
@@ -30,7 +39,7 @@ func (h *BookHandler) GetBookByID(c echo.Context) error {
 	id := c.Param("id")
 	book, err := h.service.GetBookByID(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get book"})
 	}
 	result := mapper.ToBookResponse(book)
 	return c.JSON(http.StatusOK, result)
@@ -39,12 +48,12 @@ func (h *BookHandler) GetBookByID(c echo.Context) error {
 func (h *BookHandler) CreateBook(c echo.Context) error {
 	var req dto.BookRequest
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "Invalid request"})
 	}
 	domainBook := mapper.FromRequestToDomain(&req)
 	bookId, err := h.service.CreateBook(domainBook)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get book"})
 	}
 	response := dto.BookIdResponse{
 		ID: bookId,
@@ -55,13 +64,13 @@ func (h *BookHandler) CreateBook(c echo.Context) error {
 func (h *BookHandler) UpdateBook(c echo.Context) error {
 	var req dto.BookRequest
 	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request"})
+		return c.JSON(http.StatusBadRequest, dto.ErrorResponse{Error: "Invalid request"})
 	}
 	id := c.Param("id")
 	domainBook := mapper.FromRequestToDomain(&req)
 	bookId, err := h.service.UpdateBook(id, domainBook)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get book"})
 	}
 	response := dto.BookIdResponse{
 		ID: bookId,
@@ -73,7 +82,7 @@ func (h *BookHandler) DeleteBook(c echo.Context) error {
 	id := c.Param("id")
 	err := h.service.DeleteBook(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get book"})
 	}
 	return c.NoContent(http.StatusNoContent)
 }

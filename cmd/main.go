@@ -2,6 +2,9 @@ package main
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	_ "go_library/docs"
 	bookHand "go_library/internal/api/handler/book"
 	"go_library/internal/api/routers"
 	bookServ "go_library/internal/domain/book"
@@ -10,12 +13,19 @@ import (
 	"log"
 )
 
+// @title My API
+// @version 1.0
+// @description Это Swagger API для Go проекта
+// @host localhost:8000
+// @BasePath /
 func main() {
 	database, err := db.InitDB()
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
 	e := echo.New()
+	e.Use(middleware.CORS())
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Book init
 	bookRepository := bookRepo.NewBookRepository(database)

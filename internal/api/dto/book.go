@@ -22,3 +22,7 @@ type BookRequest struct {
 type BookIdResponse struct {
 	ID string `json:"id"`
 }
+
+type ErrorResponse struct {
+	Error string `json:"error"`
+}
