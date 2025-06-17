@@ -1,1 +1,39 @@
 package mapper
+
+import (
+	"go_library/internal/api/dto"
+	domainModel "go_library/internal/domain/models"
+	gormModel "go_library/internal/infrastructure/db/models"
+)
+
+func ToBookResponse(b *domainModel.Book) *dto.BookResponse {
+	return &dto.BookResponse{
+		Id:          b.Id,
+		Title:       b.Title,
+		Description: b.Description,
+		CountPage:   b.CountPage,
+		Author: dto.AuthorResponse{
+			Id:        b.Author.Id,
+			FirstName: b.Author.FirstName,
+			LastName:  b.Author.LastName,
+		},
+		CreatedAt: b.CreatedAt,
+		UpdatedAt: b.UpdatedAt,
+	}
+}
+
+func ToBookDomain(b *gormModel.Book) *domainModel.Book {
+	return &domainModel.Book{
+		Id:          b.Id,
+		Title:       b.Title,
+		Description: b.Description,
+		CountPage:   b.CountPage,
+		Author: domainModel.Author{
+			Id:        b.Author.Id,
+			FirstName: b.Author.FirstName,
+			LastName:  b.Author.LastName,
+		},
+		CreatedAt: b.CreatedAt,
+		UpdatedAt: b.UpdatedAt,
+	}
+}

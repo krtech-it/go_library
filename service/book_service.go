@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-type BookService interface {
-	GetAllBooks() ([]schemas.BookResponse, error)
-	GetBookByID(id string) (schemas.BookResponse, error)
-	CreateBook(book schemas.BookRequest) (schemas.BookIdResponse, error)
-	UpdateBook(id string, book schemas.BookRequest) (schemas.BookIdResponse, error)
-	DeleteBook(id string) error
-}
+//type BookService interface {
+//	GetAllBooks() ([]schemas.BookResponse, error)
+//	GetBookByID(id string) (schemas.BookResponse, error)
+//	CreateBook(book schemas.BookRequest) (schemas.BookIdResponse, error)
+//	UpdateBook(id string, book schemas.BookRequest) (schemas.BookIdResponse, error)
+//	DeleteBook(id string) error
+//}
 
 type bookService struct {
 	repo repository.BookRepository
