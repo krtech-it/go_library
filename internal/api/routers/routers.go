@@ -11,4 +11,5 @@ func RegisterRoutes(e *echo.Echo, bookHandler *bookHandler.BookHandler) {
 	bookGroup := api.Group("/book")
 	bookGroup.GET("/", bookHandler.GetAllBooks)
 	bookGroup.GET("/:id", bookHandler.GetBookByID)
+	bookGroup.POST("/", bookHandler.CreateBook)
 }

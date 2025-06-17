@@ -8,7 +8,7 @@ import (
 type BookRepository interface {
 	GetAllBooks() ([]models.Book, error)
 	GetBookByID(id string) (models.Book, error)
-	CreateBook(book models.Book) error
+	CreateBook(book *models.Book) error
 	CheckAuthorByID(id string) error
 	CheckBookName(name string) error
 	UpdateBook(id string, book models.Book) error
@@ -35,8 +35,8 @@ func (r *bookRepository) GetBookByID(id string) (models.Book, error) {
 	return book, err
 }
 
-func (r *bookRepository) CreateBook(book models.Book) error {
-	return r.db.Create(&book).Error
+func (r *bookRepository) CreateBook(book *models.Book) error {
+	return r.db.Create(book).Error
 }
 
 func (r *bookRepository) CheckAuthorByID(id string) error {

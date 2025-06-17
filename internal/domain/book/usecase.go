@@ -7,7 +7,7 @@ import (
 type BookService interface {
 	GetAllBooks() ([]*models.Book, error)
 	GetBookByID(id string) (*models.Book, error)
-	//CreateBook(book schemas.BookRequest) (schemas.BookIdResponse, error)
+	CreateBook(book *models.Book) (string, error)
 	//UpdateBook(id string, book schemas.BookRequest) (schemas.BookIdResponse, error)
 	//DeleteBook(id string) error
 }
