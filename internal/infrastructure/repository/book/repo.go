@@ -11,7 +11,7 @@ type BookRepository interface {
 	CreateBook(book *models.Book) error
 	CheckAuthorByID(id string) error
 	CheckBookName(name string) error
-	UpdateBook(id string, book models.Book) error
+	UpdateBook(id string, book *models.Book) error
 	DeleteBook(id string) error
 }
 
@@ -49,7 +49,7 @@ func (r *bookRepository) CheckBookName(name string) error {
 	return r.db.Where(map[string]interface{}{"title": name}).First(&book).Error
 }
 
-func (r *bookRepository) UpdateBook(id string, book models.Book) error {
+func (r *bookRepository) UpdateBook(id string, book *models.Book) error {
 	return r.db.Model(models.Book{}).Where(map[string]interface{}{"id": id}).Updates(book).Error
 }
 

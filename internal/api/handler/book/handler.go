@@ -50,6 +50,32 @@ func (h *BookHandler) CreateBook(c echo.Context) error {
 	return c.JSON(http.StatusCreated, response)
 }
 
+func (h *BookHandler) UpdateBook(c echo.Context) error {
+	var req dto.BookRequest
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid request"})
+	}
+	id := c.Param("id")
+	domainBook := mapper.FromRequestToDomain(&req)
+	bookId, err := h.service.UpdateBook(id, domainBook)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+	}
+	response := dto.BookIdResponse{
+		ID: bookId,
+	}
+	return c.JSON(http.StatusAccepted, response)
+}
+
+func (h *BookHandler) DeleteBook(c echo.Context) error {
+	id := c.Param("id")
+	err := h.service.DeleteBook(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+	}
+	return c.NoContent(http.StatusNoContent)
+}
+
 func NewBookHandler(service book.BookService) *BookHandler {
 	return &BookHandler{service: service}
 }

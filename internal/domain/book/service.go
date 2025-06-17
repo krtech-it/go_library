@@ -6,6 +6,7 @@ import (
 	domainModel "go_library/internal/domain/models"
 	bookRepo "go_library/internal/infrastructure/repository/book"
 	"go_library/internal/utils/mapper"
+	"time"
 )
 
 type bookService struct {
@@ -42,6 +43,29 @@ func (s *bookService) CreateBook(book *domainModel.Book) (string, error) {
 	}
 	err := s.repo.CreateBook(bookModel)
 	return bookModel.Id, err
+}
+
+func (s *bookService) UpdateBook(id string, book *domainModel.Book) (string, error) {
+	bookDB, err := s.repo.GetBookByID(id)
+	if err != nil {
+		return id, errors.New("book not exist")
+	}
+	bookModel := mapper.FromDomainToBookModel(book)
+	bookModel.UpdatedAt = time.Time{}
+	if err := s.repo.CheckAuthorByID(bookModel.AuthorID); err != nil {
+		return id, errors.New("author not exist")
+	}
+	if bookDB.Title != bookModel.Title {
+		if err := s.repo.CheckBookName(bookModel.Title); err == nil {
+			return id, errors.New("Book already exists")
+		}
+	}
+	err = s.repo.UpdateBook(id, bookModel)
+	return id, err
+}
+
+func (s *bookService) DeleteBook(id string) error {
+	return s.repo.DeleteBook(id)
 }
 
 func NewBookService(repo bookRepo.BookRepository) BookService {

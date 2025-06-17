@@ -12,4 +12,6 @@ func RegisterRoutes(e *echo.Echo, bookHandler *bookHandler.BookHandler) {
 	bookGroup.GET("/", bookHandler.GetAllBooks)
 	bookGroup.GET("/:id", bookHandler.GetBookByID)
 	bookGroup.POST("/", bookHandler.CreateBook)
+	bookGroup.PATCH("/:id", bookHandler.UpdateBook)
+	bookGroup.DELETE("/:id", bookHandler.DeleteBook)
 }
