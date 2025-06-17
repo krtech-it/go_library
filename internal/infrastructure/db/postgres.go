@@ -1,7 +1,7 @@
 package db
 
 import (
-	"go_library/models"
+	"go_library/internal/infrastructure/db/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"

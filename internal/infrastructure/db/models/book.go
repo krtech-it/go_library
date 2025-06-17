@@ -1,17 +1,6 @@
 package models
 
-import (
-	"time"
-)
-
-type Author struct {
-	Id        string    `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Books     []Book    `gorm:"foreignKey:AuthorID" json:"books"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
+import "time"
 
 type Book struct {
 	Id          string    `gorm:"type:uuid;default:uuid_generate_v4();primary_key" json:"id"`
@@ -23,11 +12,4 @@ type Book struct {
 	Genres      []*Genre  `gorm:"many2many:book_genres" json:"genres"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-}
-
-type Genre struct {
-	Id        string
-	Name      string    `json:"name"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
 }
