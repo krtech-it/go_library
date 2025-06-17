@@ -35,6 +35,17 @@ func (h *BookHandler) GetAllBooks(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+// GetBookByID godoc
+// @Summary Получить книгу по ID
+// @Description Возвращает книгу по её идентификатору с информацией об авторе
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID" example("123e4567-e89b-12d3-a456-426614174000")
+// @Success 200 {object} dto.BookResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/book/{id} [get]
 func (h *BookHandler) GetBookByID(c echo.Context) error {
 	id := c.Param("id")
 	book, err := h.service.GetBookByID(id)
@@ -45,6 +56,17 @@ func (h *BookHandler) GetBookByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
+// CreateBook godoc
+// @Summary Создать новую книгу
+// @Description Создает новую книгу в библиотеке с указанным автором
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param book body dto.BookRequest true "Book object"
+// @Success 201 {object} dto.BookIdResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/book [post]
 func (h *BookHandler) CreateBook(c echo.Context) error {
 	var req dto.BookRequest
 	if err := c.Bind(&req); err != nil {
@@ -61,6 +83,19 @@ func (h *BookHandler) CreateBook(c echo.Context) error {
 	return c.JSON(http.StatusCreated, response)
 }
 
+// UpdateBook godoc
+// @Summary Обновить книгу
+// @Description Обновляет информацию о книге по её ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID" example("123e4567-e89b-12d3-a456-426614174000")
+// @Param book body dto.BookRequest true "Book object"
+// @Success 202 {object} dto.BookIdResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/book/{id} [put]
 func (h *BookHandler) UpdateBook(c echo.Context) error {
 	var req dto.BookRequest
 	if err := c.Bind(&req); err != nil {
@@ -78,6 +113,17 @@ func (h *BookHandler) UpdateBook(c echo.Context) error {
 	return c.JSON(http.StatusAccepted, response)
 }
 
+// DeleteBook godoc
+// @Summary Удалить книгу
+// @Description Удаляет книгу по её ID
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "Book ID" example("123e4567-e89b-12d3-a456-426614174000")
+// @Success 204 "No Content"
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/book/{id} [delete]
 func (h *BookHandler) DeleteBook(c echo.Context) error {
 	id := c.Param("id")
 	err := h.service.DeleteBook(id)
