@@ -2,6 +2,7 @@ package book
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 	"go_library/internal/api/dto"
 	"go_library/internal/domain/book"
 	"go_library/internal/utils/mapper"
@@ -13,6 +14,7 @@ type BookHandler struct {
 }
 
 func (h *BookHandler) GetAllBooks(c echo.Context) error {
+	log.Info("Get all books")
 	books, err := h.service.GetAllBooks()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get books"})

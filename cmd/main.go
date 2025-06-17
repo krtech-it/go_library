@@ -16,17 +16,12 @@ func main() {
 		log.Fatalf("Could not connect to database: %v", err)
 	}
 	e := echo.New()
-	//bookRepo := repository.NewBookRepository(database)
-	//bookService := service.NewBookService(bookRepo)
-	//bookHadler := handlers.NewBookHandler(bookService)
-	//e.GET("/books", bookHadler.GetAllBooks)
-	//e.GET("/books/:id", bookHadler.GetBookByID)
-	//e.POST("/books", bookHadler.CreateBook)
-	//e.PATCH("/books/:id", bookHadler.UpdateBook)
-	//e.DELETE("/books/:id", bookHadler.DeleteBook)
+
+	// Book init
 	bookRepository := bookRepo.NewBookRepository(database)
 	bookServise := bookServ.NewBookService(bookRepository)
 	bookHadler := bookHand.NewBookHandler(bookServise)
+
 	routers.RegisterRoutes(e, bookHadler)
 	e.Start("localhost:8000")
 }
