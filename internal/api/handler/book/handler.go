@@ -24,6 +24,16 @@ func (h *BookHandler) GetAllBooks(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+func (h *BookHandler) GetBookByID(c echo.Context) error {
+	id := c.Param("id")
+	book, err := h.service.GetBookByID(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Could not get book"})
+	}
+	result := mapper.ToBookResponse(book)
+	return c.JSON(http.StatusOK, result)
+}
+
 func NewBookHandler(service book.BookService) *BookHandler {
 	return &BookHandler{service: service}
 }

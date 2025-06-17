@@ -19,21 +19,14 @@ func (s *bookService) GetAllBooks() ([]*domainModel.Book, error) {
 	result := make([]*domainModel.Book, 0)
 	for _, book := range books {
 		result = append(result, mapper.ToBookDomain(&book))
-		//result[i] = schemas.BookResponse{
-		//	ID:          book.Id,
-		//	Title:       book.Title,
-		//	Description: book.Description,
-		//	CountPage:   book.CountPage,
-		//	Author: schemas.AuthorResponse{
-		//		ID:        book.Author.Id,
-		//		FirstName: book.Author.FirstName,
-		//		LastName:  book.Author.LastName,
-		//	},
-		//	CreatedAt: book.CreatedAt,
-		//	UpdatedAt: book.UpdatedAt,
-		//}
 	}
 	return result, nil
+}
+
+func (s *bookService) GetBookByID(id string) (*domainModel.Book, error) {
+	book, err := s.repo.GetBookByID(id)
+	result := mapper.ToBookDomain(&book)
+	return result, err
 }
 
 func NewBookService(repo bookRepo.BookRepository) BookService {
