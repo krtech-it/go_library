@@ -95,7 +95,7 @@ func (h *BookHandler) CreateBook(c echo.Context) error {
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 404 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
-// @Router /api/book/{id} [put]
+// @Router /api/book/{id} [patch]
 func (h *BookHandler) UpdateBook(c echo.Context) error {
 	var req dto.BookRequest
 	if err := c.Bind(&req); err != nil {

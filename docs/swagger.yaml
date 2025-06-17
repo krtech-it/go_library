@@ -1,34 +1,76 @@
 basePath: /
 definitions:
   dto.AuthorResponse:
+    description: Author response object with basic information
     properties:
       first_name:
+        example: John
         type: string
       id:
+        example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       last_name:
+        example: Doe
         type: string
     type: object
+  dto.BookIdResponse:
+    description: Book ID response object returned after creation or update
+    properties:
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+    type: object
+  dto.BookRequest:
+    description: Book request object for creating or updating a book
+    properties:
+      author_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      count_page:
+        example: 180
+        type: integer
+      description:
+        example: A story of the fabulously wealthy Jay Gatsby
+        type: string
+      title:
+        example: The Great Gatsby
+        type: string
+    required:
+    - author_id
+    - count_page
+    - description
+    - title
+    type: object
   dto.BookResponse:
+    description: Book response object with detailed information including author and
+      metadata
     properties:
       author:
         $ref: '#/definitions/dto.AuthorResponse'
       count_page:
+        example: 180
         type: integer
       created_at:
+        example: "2024-03-20T10:00:00Z"
         type: string
       description:
+        example: A story of the fabulously wealthy Jay Gatsby
         type: string
       id:
+        example: 123e4567-e89b-12d3-a456-426614174000
         type: string
       title:
+        example: The Great Gatsby
         type: string
       updated_at:
+        example: "2024-03-20T10:00:00Z"
         type: string
     type: object
   dto.ErrorResponse:
+    description: Error response object returned when an error occurs
     properties:
       error:
+        example: Error message
         type: string
     type: object
 host: localhost:8000
@@ -57,6 +99,131 @@ paths:
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: Получить все книги
+      tags:
+      - books
+    post:
+      consumes:
+      - application/json
+      description: Создает новую книгу в библиотеке с указанным автором
+      parameters:
+      - description: Book object
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.BookIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Создать новую книгу
+      tags:
+      - books
+  /api/book/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Удаляет книгу по её ID
+      parameters:
+      - description: Book ID
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Удалить книгу
+      tags:
+      - books
+    get:
+      consumes:
+      - application/json
+      description: Возвращает книгу по её идентификатору с информацией об авторе
+      parameters:
+      - description: Book ID
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.BookResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Получить книгу по ID
+      tags:
+      - books
+    patch:
+      consumes:
+      - application/json
+      description: Обновляет информацию о книге по её ID
+      parameters:
+      - description: Book ID
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Book object
+        in: body
+        name: book
+        required: true
+        schema:
+          $ref: '#/definitions/dto.BookRequest'
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            $ref: '#/definitions/dto.BookIdResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Обновить книгу
       tags:
       - books
 swagger: "2.0"
