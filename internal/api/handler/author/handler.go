@@ -33,6 +33,17 @@ func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+// GetAuthorByID godoc
+// @Summary Получить автора по ID
+// @Description Возвращает информацию об авторе по его идентификатору, включая список его книг
+// @Tags authors
+// @Accept json
+// @Produce json
+// @Param id path string true "Author ID" example("123e4567-e89b-12d3-a456-426614174000")
+// @Success 200 {object} dto.AuthorFullResponse
+// @Failure 404 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/author/{id} [get]
 func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 	id := c.Param("id")
 	author, err := h.service.GetAuthorByID(id)

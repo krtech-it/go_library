@@ -1,5 +1,21 @@
 basePath: /
 definitions:
+  dto.AuthorFullResponse:
+    properties:
+      books:
+        items:
+          $ref: '#/definitions/dto.BaseBookResponse'
+        type: array
+      first_name:
+        example: John
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      last_name:
+        example: Doe
+        type: string
+    type: object
   dto.AuthorResponse:
     description: Author response object with basic information
     properties:
@@ -11,6 +27,21 @@ definitions:
         type: string
       last_name:
         example: Doe
+        type: string
+    type: object
+  dto.BaseBookResponse:
+    properties:
+      count_page:
+        example: 180
+        type: integer
+      description:
+        example: A story of the fabulously wealthy Jay Gatsby
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      title:
+        example: The Great Gatsby
         type: string
     type: object
   dto.BookIdResponse:
@@ -99,6 +130,37 @@ paths:
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: Получить всех авторов
+      tags:
+      - authors
+  /api/author/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Возвращает информацию об авторе по его идентификатору, включая
+        список его книг
+      parameters:
+      - description: Author ID
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.AuthorFullResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Получить автора по ID
       tags:
       - authors
   /api/book:

@@ -47,6 +47,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/author/{id}": {
+            "get": {
+                "description": "Возвращает информацию об авторе по его идентификатору, включая список его книг",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "authors"
+                ],
+                "summary": "Получить автора по ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "\"123e4567-e89b-12d3-a456-426614174000\"",
+                        "description": "Author ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuthorFullResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/book": {
             "get": {
                 "description": "Возвращает список всех книг с автором и мета-данными",
@@ -268,6 +313,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AuthorFullResponse": {
+            "type": "object",
+            "properties": {
+                "books": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.BaseBookResponse"
+                    }
+                },
+                "first_name": {
+                    "type": "string",
+                    "example": "John"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "last_name": {
+                    "type": "string",
+                    "example": "Doe"
+                }
+            }
+        },
         "dto.AuthorResponse": {
             "description": "Author response object with basic information",
             "type": "object",
@@ -283,6 +351,27 @@ const docTemplate = `{
                 "last_name": {
                     "type": "string",
                     "example": "Doe"
+                }
+            }
+        },
+        "dto.BaseBookResponse": {
+            "type": "object",
+            "properties": {
+                "count_page": {
+                    "type": "integer",
+                    "example": 180
+                },
+                "description": {
+                    "type": "string",
+                    "example": "A story of the fabulously wealthy Jay Gatsby"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "The Great Gatsby"
                 }
             }
         },
