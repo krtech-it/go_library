@@ -10,8 +10,8 @@ type authorService struct {
 	repo autorRepo.AuthorRepository
 }
 
-func (a *authorService) GetAllAuthors() ([]*domainModel.Author, error) {
-	authors, err := a.repo.GetAllAuthors()
+func (s *authorService) GetAllAuthors() ([]*domainModel.Author, error) {
+	authors, err := s.repo.GetAllAuthors()
 	if err != nil {
 		return nil, err
 	}
@@ -20,6 +20,15 @@ func (a *authorService) GetAllAuthors() ([]*domainModel.Author, error) {
 		result = append(result, mapper.FromGormToDomainAuthor(&author))
 	}
 	return result, nil
+}
+
+func (s *authorService) GetAuthorByID(id string) (*domainModel.Author, error) {
+	author, err := s.repo.GetAuthorByID(id)
+	if err != nil {
+		return nil, err
+	}
+	result := mapper.FromGormToDomainAuthor(author)
+	return result, err
 }
 
 func NewAuthorService(repo autorRepo.AuthorRepository) AuthorService {

@@ -6,12 +6,18 @@ import (
 	gormModel "go_library/internal/infrastructure/db/models"
 )
 
-func ToBookResponse(b *domainModel.Book) *dto.BookResponse {
-	return &dto.BookResponse{
+func FromDomainToResponseBaseBook(b *domainModel.Book) *dto.BaseBookResponse {
+	return &dto.BaseBookResponse{
 		Id:          b.Id,
 		Title:       b.Title,
 		Description: b.Description,
 		CountPage:   b.CountPage,
+	}
+}
+
+func ToBookResponse(b *domainModel.Book) *dto.BookResponse {
+	return &dto.BookResponse{
+		BaseBookResponse: *FromDomainToResponseBaseBook(b),
 		Author: dto.AuthorResponse{
 			Id:        b.Author.Id,
 			FirstName: b.Author.FirstName,

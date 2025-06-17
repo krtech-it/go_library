@@ -7,6 +7,7 @@ import (
 
 type AuthorRepository interface {
 	GetAllAuthors() ([]models.Author, error)
+	GetAuthorByID(id string) (*models.Author, error)
 }
 
 type authorRepository struct {
@@ -17,6 +18,12 @@ func (r *authorRepository) GetAllAuthors() ([]models.Author, error) {
 	var authors []models.Author
 	err := r.db.Find(&authors).Error
 	return authors, err
+}
+
+func (r *authorRepository) GetAuthorByID(id string) (*models.Author, error) {
+	var author models.Author
+	err := r.db.Preload("Books").Where(map[string]string{"id": id}).First(&author).Error
+	return &author, err
 }
 
 func NewAuthorRepository(db *gorm.DB) AuthorRepository {

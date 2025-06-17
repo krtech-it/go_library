@@ -33,6 +33,16 @@ func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
+	id := c.Param("id")
+	author, err := h.service.GetAuthorByID(id)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get author"})
+	}
+	response := mapper.FromDomainToResponseAuthorFull(author)
+	return c.JSON(http.StatusOK, response)
+}
+
 func NewAuthorHandler(service author.AuthorService) *AuthorHandler {
 	return &AuthorHandler{service: service}
 }

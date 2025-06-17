@@ -9,5 +9,6 @@ type AuthorResponse struct {
 }
 
 type AuthorFullResponse struct {
-	AuthorResponse
+	AuthorResponse `json:",inline"`
+	Books          []BaseBookResponse `json:"books"`
 }
