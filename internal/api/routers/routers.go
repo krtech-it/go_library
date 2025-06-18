@@ -32,4 +32,5 @@ func RegisterRoutes(e *echo.Echo,
 	authorGroup := api.Group("/author")
 	authorGroup.GET("", authorHandler.GetAllAuthors)
 	authorGroup.GET("/:id", authorHandler.GetAuthorByID)
+	authorGroup.POST("", authorHandler.CreateAuthor)
 }

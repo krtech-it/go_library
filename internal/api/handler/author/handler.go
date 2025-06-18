@@ -1,9 +1,11 @@
 package author
 
 import (
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"go_library/internal/api/dto"
 	"go_library/internal/domain/author"
+	ApiError "go_library/internal/errors"
 	"go_library/internal/utils/mapper"
 	"net/http"
 )
@@ -54,6 +56,22 @@ func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 	}
 	response := mapper.FromDomainToResponseAuthorFull(authorObj)
 	return c.JSON(http.StatusOK, response)
+}
+
+func (h *AuthorHandler) CreateAuthor(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := claims["user_id"].(string)
+	var req dto.AuthorRequest
+	if err := c.Bind(&req); err != nil {
+		return ApiError.NewAPIError(http.StatusBadRequest, "invalid data")
+	}
+	domainAuthor := mapper.FromRequestToDomainAuthor(&req)
+	err := h.service.CreateAuthor(domainAuthor, userID)
+	if err != nil {
+		return err
+	}
+	return c.NoContent(http.StatusCreated)
 }
 
 func NewAuthorHandler(service author.AuthorService) *AuthorHandler {

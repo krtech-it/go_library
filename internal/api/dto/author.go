@@ -12,3 +12,8 @@ type AuthorFullResponse struct {
 	AuthorResponse `json:",inline"`
 	Books          []BaseBookResponse `json:"books"`
 }
+
+type AuthorRequest struct {
+	FirstName string `json:"first_name" example:"John"`
+	LastName  string `json:"last_name" example:"Doe"`
+}

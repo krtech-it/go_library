@@ -51,3 +51,20 @@ func FromDomainToResponseAuthorFull(author *domainModel.Author) *dto.AuthorFullR
 		Books:          books,
 	}
 }
+
+func FromRequestToDomainAuthor(author *dto.AuthorRequest) *domainModel.Author {
+	return &domainModel.Author{
+		FirstName: author.FirstName,
+		LastName:  author.LastName,
+	}
+}
+
+func FromDomainToGormAuthor(author *domainModel.Author) *gormModel.Author {
+	return &gormModel.Author{
+		Id:        author.Id,
+		FirstName: author.FirstName,
+		LastName:  author.LastName,
+		CreatedAt: author.CreatedAt,
+		UpdatedAt: author.UpdatedAt,
+	}
+}

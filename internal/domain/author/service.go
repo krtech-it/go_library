@@ -1,6 +1,7 @@
 package author
 
 import (
+	"github.com/google/uuid"
 	domainModel "go_library/internal/domain/models"
 	ApiError "go_library/internal/errors"
 	autorRepo "go_library/internal/infrastructure/repository/author"
@@ -31,6 +32,27 @@ func (s *authorService) GetAuthorByID(id string) (*domainModel.Author, error) {
 	}
 	result := mapper.FromGormToDomainAuthor(author)
 	return result, nil
+}
+
+func (s *authorService) CreateAuthor(author *domainModel.Author, userId string) error {
+	gormUser, err := s.repo.GetUser(userId)
+	if err != nil {
+		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
+	}
+	if gormUser.Admin {
+		return ApiError.NewAPIError(http.StatusForbidden, "Пользователь уже создал автора")
+	}
+	gormAuthor := mapper.FromDomainToGormAuthor(author)
+	gormAuthor.Id = uuid.NewString()
+	err = s.repo.CreateAuthor(gormAuthor)
+	if err != nil {
+		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not create author")
+	}
+	err = s.repo.JoinAuthorUser(userId, gormAuthor.Id)
+	if err != nil {
+		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not join author")
+	}
+	return nil
 }
 
 func NewAuthorService(repo autorRepo.AuthorRepository) AuthorService {
