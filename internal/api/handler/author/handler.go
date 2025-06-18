@@ -58,6 +58,19 @@ func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 	return c.JSON(http.StatusOK, response)
 }
 
+// CreateAuthor godoc
+// @Summary Создать автора
+// @Description Создает нового автора. Требуется авторизация.
+// @Tags authors
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param author body dto.AuthorRequest true "Данные автора"
+// @Success 201 "Автор успешно создан"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/author [post]
 func (h *AuthorHandler) CreateAuthor(c echo.Context) error {
 	user := c.Get("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)

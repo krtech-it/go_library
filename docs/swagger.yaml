@@ -23,6 +23,15 @@ definitions:
         example: Doe
         type: string
     type: object
+  dto.AuthorRequest:
+    properties:
+      first_name:
+        example: John
+        type: string
+      last_name:
+        example: Doe
+        type: string
+    type: object
   dto.AuthorResponse:
     description: Author response object with basic information
     properties:
@@ -178,6 +187,39 @@ paths:
       security:
       - Bearer: []
       summary: Получить всех авторов
+      tags:
+      - authors
+    post:
+      consumes:
+      - application/json
+      description: Создает нового автора. Требуется авторизация.
+      parameters:
+      - description: Данные автора
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AuthorRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Автор успешно создан
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Создать автора
       tags:
       - authors
   /api/author/{id}:

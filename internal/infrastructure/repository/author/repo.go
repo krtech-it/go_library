@@ -40,7 +40,7 @@ func (r *authorRepository) CreateAuthor(author *models.Author) error {
 }
 
 func (r *authorRepository) JoinAuthorUser(userId string, authorId string) error {
-	return r.db.Model(models.User{}).Where(map[string]string{"id": userId}).Updates(map[string]string{"author_id": authorId}).Error
+	return r.db.Model(models.User{}).Where(map[string]string{"id": userId}).Update("author_id", authorId).Error
 }
 
 func NewAuthorRepository(db *gorm.DB) AuthorRepository {

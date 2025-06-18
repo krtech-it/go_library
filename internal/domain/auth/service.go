@@ -54,6 +54,7 @@ func (s *authService) generateToken(user *models.User) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = user.Username
 	claims["admin"] = user.Admin
+	claims["user_id"] = user.Id
 	claims["exp"] = time.Now().Add(time.Minute * 40).Unix()
 	return token.SignedString(core.JwtSecret)
 }

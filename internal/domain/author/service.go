@@ -39,7 +39,7 @@ func (s *authorService) CreateAuthor(author *domainModel.Author, userId string) 
 	if err != nil {
 		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
 	}
-	if gormUser.Admin {
+	if gormUser.AuthorID != nil {
 		return ApiError.NewAPIError(http.StatusForbidden, "Пользователь уже создал автора")
 	}
 	gormAuthor := mapper.FromDomainToGormAuthor(author)
