@@ -9,10 +9,12 @@ import (
 	authorHand "go_library/internal/api/handler/author"
 	bookHand "go_library/internal/api/handler/book"
 	"go_library/internal/api/routers"
+	authServ "go_library/internal/domain/auth"
 	authorServ "go_library/internal/domain/author"
 	bookServ "go_library/internal/domain/book"
 	"go_library/internal/infrastructure/db"
 	middleware2 "go_library/internal/infrastructure/middleware_custom"
+	authRepo "go_library/internal/infrastructure/repository/auth"
 	authorRepo "go_library/internal/infrastructure/repository/author"
 	bookRepo "go_library/internal/infrastructure/repository/book"
 	"log"
@@ -40,7 +42,9 @@ func main() {
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Auth init
-	authHand := authHand.NewAuthHandler(123)
+	authRepository := authRepo.NewAuthRepository(database)
+	authService := authServ.NewAuthService(authRepository)
+	authHand := authHand.NewAuthHandler(authService)
 
 	// Book init
 	bookRepository := bookRepo.NewBookRepository(database)

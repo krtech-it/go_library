@@ -1,15 +1,15 @@
 package auth
 
 import (
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-	"go_library/internal/core"
+	"go_library/internal/api/dto"
+	"go_library/internal/domain/auth"
+	ApiError "go_library/internal/errors"
 	"net/http"
-	"time"
 )
 
 type AuthHandler struct {
-	service int
+	service auth.AuthService
 }
 
 // Login godoc
@@ -20,36 +20,24 @@ type AuthHandler struct {
 // @Produce json
 // @Param username formData string true "Имя пользователя" example("admin")
 // @Param password formData string true "Пароль" example("1234")
-// @Success 200 {object} map[string]string
+// @Success 200 {object} dto.AccessToken
 // @Failure 401 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /login [post]
 func (h *AuthHandler) Login(c echo.Context) error {
 	// Пример проверки логина
-	username := c.FormValue("username")
-	password := c.FormValue("password")
-
-	if username != "admin" || password != "1234" {
-		return echo.ErrUnauthorized
+	var req dto.AuthLogin
+	if err := c.Bind(&req); err != nil {
+		return ApiError.NewAPIError(http.StatusBadRequest, "invalid data")
 	}
-
-	// Генерация токена
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = username
-	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Second * 40).Unix()
-
-	t, err := token.SignedString(core.JwtSecret)
+	token, err := h.service.Login(req.Username, req.Password)
 	if err != nil {
 		return err
 	}
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"token": t,
-	})
+	result := dto.TokenResponse{AccessToken: token}
+	return c.JSON(http.StatusOK, result)
 }
 
-func NewAuthHandler(service int) *AuthHandler {
+func NewAuthHandler(service auth.AuthService) *AuthHandler {
 	return &AuthHandler{service: service}
 }
