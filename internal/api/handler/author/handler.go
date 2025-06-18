@@ -46,11 +46,11 @@ func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
 // @Router /api/author/{id} [get]
 func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 	id := c.Param("id")
-	author, err := h.service.GetAuthorByID(id)
+	authorObj, err := h.service.GetAuthorByID(id)
 	if err != nil {
 		return err
 	}
-	response := mapper.FromDomainToResponseAuthorFull(author)
+	response := mapper.FromDomainToResponseAuthorFull(authorObj)
 	return c.JSON(http.StatusOK, response)
 }
 

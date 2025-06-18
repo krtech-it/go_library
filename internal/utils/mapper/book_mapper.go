@@ -43,7 +43,7 @@ func ToBookResponseWithGenres(b *domainModel.Book) *dto.BookResponseGenres {
 }
 
 func ToBookDomain(b *gormModel.Book) *domainModel.Book {
-	genres := []domainModel.Genre{}
+	var genres []domainModel.Genre
 	for _, genre := range b.Genres {
 		genres = append(genres, domainModel.Genre{
 			Id:   genre.Id,

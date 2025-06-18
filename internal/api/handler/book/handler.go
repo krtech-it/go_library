@@ -49,11 +49,11 @@ func (h *BookHandler) GetAllBooks(c echo.Context) error {
 // @Router /api/book/{id} [get]
 func (h *BookHandler) GetBookByID(c echo.Context) error {
 	id := c.Param("id")
-	book, err := h.service.GetBookByID(id)
+	bookObj, err := h.service.GetBookByID(id)
 	if err != nil {
 		return err
 	}
-	result := mapper.ToBookResponseWithGenres(book)
+	result := mapper.ToBookResponseWithGenres(bookObj)
 	return c.JSON(http.StatusOK, result)
 }
 
