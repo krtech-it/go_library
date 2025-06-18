@@ -5,13 +5,14 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
 	_ "go_library/docs"
+	authHand "go_library/internal/api/handler/auth"
 	authorHand "go_library/internal/api/handler/author"
 	bookHand "go_library/internal/api/handler/book"
 	"go_library/internal/api/routers"
 	authorServ "go_library/internal/domain/author"
 	bookServ "go_library/internal/domain/book"
 	"go_library/internal/infrastructure/db"
-	middleware2 "go_library/internal/infrastructure/middleware"
+	middleware2 "go_library/internal/infrastructure/middleware_custom"
 	authorRepo "go_library/internal/infrastructure/repository/author"
 	bookRepo "go_library/internal/infrastructure/repository/book"
 	"log"
@@ -33,6 +34,9 @@ func main() {
 	e.Use(middleware2.ErrorMiddleware)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
+	// Auth init
+	authHand := authHand.NewAuthHandler(123)
+
 	// Book init
 	bookRepository := bookRepo.NewBookRepository(database)
 	bookService := bookServ.NewBookService(bookRepository)
@@ -43,6 +47,6 @@ func main() {
 	authorService := authorServ.NewAuthorService(authorRepository)
 	authorHandler := authorHand.NewAuthorHandler(authorService)
 
-	routers.RegisterRoutes(e, bookHandler, authorHandler)
+	routers.RegisterRoutes(e, bookHandler, authorHandler, authHand)
 	e.Start("localhost:8000")
 }
