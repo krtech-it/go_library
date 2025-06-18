@@ -7,7 +7,7 @@ type User struct {
 	Username  string    `gorm:"unique:true" json:"username"`
 	Admin     bool      `json:"admin" gorm:"default:false"`
 	Password  string    `json:"password"`
-	AuthorID  string    `json:"author_id"`
+	AuthorID  *string   `json:"author_id"`
 	Author    Author    `gorm:"foreignKey:AuthorID" json:"author"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

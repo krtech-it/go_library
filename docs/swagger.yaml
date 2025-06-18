@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  dto.AuthLogin:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   dto.AuthorFullResponse:
     properties:
       books:
@@ -365,21 +372,15 @@ paths:
   /login:
     post:
       consumes:
-      - application/x-www-form-urlencoded
+      - application/json
       description: Выполняет вход пользователя и возвращает JWT токен
       parameters:
-      - description: Имя пользователя
-        example: '"admin"'
-        in: formData
-        name: username
+      - description: Auth object
+        in: body
+        name: user
         required: true
-        type: string
-      - description: Пароль
-        example: '"1234"'
-        in: formData
-        name: password
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/dto.AuthLogin'
       produces:
       - application/json
       responses:
@@ -387,6 +388,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
@@ -401,28 +406,26 @@ paths:
   /register:
     post:
       consumes:
-      - application/x-www-form-urlencoded
+      - application/json
       description: Выполняет регистрацию пользователя и возвращает JWT токен
       parameters:
-      - description: Имя пользователя
-        example: '"admin"'
-        in: formData
-        name: username
+      - description: Auth object
+        in: body
+        name: user
         required: true
-        type: string
-      - description: Пароль
-        example: '"1234"'
-        in: formData
-        name: password
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/dto.AuthLogin'
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/dto.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:

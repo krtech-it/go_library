@@ -2,6 +2,7 @@ package auth
 
 import (
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"go_library/internal/core"
 	"go_library/internal/domain/models"
 	ApiError "go_library/internal/errors"
@@ -18,16 +19,12 @@ type authService struct {
 }
 
 func (s *authService) Login(username, password string) (string, error) {
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
-	}
 	userGorm, err := s.repo.GetUser(username)
 	if err != nil {
 		return "", ApiError.NewAPIError(http.StatusNotFound, "Could not get user")
 	}
 	user := mapper.FromGormToDomainUser(userGorm)
-	if user.Password != string(hashPassword) {
+	if !s.checkPassword(password, user.Password) {
 		return "", ApiError.NewAPIError(http.StatusUnauthorized, "Invalid username or password")
 	}
 	return s.generateToken(user)
@@ -43,7 +40,8 @@ func (s *authService) Register(username, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	err = s.repo.CreateUser(&modelGorm.User{Username: username, Password: string(hashPassword), Admin: false})
+	err = s.repo.CreateUser(&modelGorm.User{Username: username, Password: string(hashPassword),
+		Admin: false, Id: uuid.NewString()})
 	if err != nil {
 		return "", ApiError.NewAPIError(http.StatusInternalServerError, "Could not create user")
 	}
@@ -58,6 +56,11 @@ func (s *authService) generateToken(user *models.User) (string, error) {
 	claims["admin"] = user.Admin
 	claims["exp"] = time.Now().Add(time.Minute * 40).Unix()
 	return token.SignedString(core.JwtSecret)
+}
+
+func (s *authService) checkPassword(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 func NewAuthService(repo authRepo.AuthRepository) AuthService {

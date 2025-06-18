@@ -350,7 +350,7 @@ const docTemplate = `{
             "post": {
                 "description": "Выполняет вход пользователя и возвращает JWT токен",
                 "consumes": [
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -361,20 +361,13 @@ const docTemplate = `{
                 "summary": "Аутентификация пользователя",
                 "parameters": [
                     {
-                        "type": "string",
-                        "example": "\"admin\"",
-                        "description": "Имя пользователя",
-                        "name": "username",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "\"1234\"",
-                        "description": "Пароль",
-                        "name": "password",
-                        "in": "formData",
-                        "required": true
+                        "description": "Auth object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuthLogin"
+                        }
                     }
                 ],
                 "responses": {
@@ -382,6 +375,12 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
@@ -403,7 +402,7 @@ const docTemplate = `{
             "post": {
                 "description": "Выполняет регистрацию пользователя и возвращает JWT токен",
                 "consumes": [
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -414,27 +413,26 @@ const docTemplate = `{
                 "summary": "Регистрация пользователя",
                 "parameters": [
                     {
-                        "type": "string",
-                        "example": "\"admin\"",
-                        "description": "Имя пользователя",
-                        "name": "username",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "example": "\"1234\"",
-                        "description": "Пароль",
-                        "name": "password",
-                        "in": "formData",
-                        "required": true
+                        "description": "Auth object",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AuthLogin"
+                        }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "201": {
+                        "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/dto.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "401": {
@@ -454,6 +452,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.AuthLogin": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.AuthorFullResponse": {
             "type": "object",
             "properties": {

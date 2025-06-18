@@ -16,11 +16,11 @@ type AuthHandler struct {
 // @Summary Аутентификация пользователя
 // @Description Выполняет вход пользователя и возвращает JWT токен
 // @Tags auth
-// @Accept x-www-form-urlencoded
+// @Accept json
 // @Produce json
-// @Param username formData string true "Имя пользователя" example("admin")
-// @Param password formData string true "Пароль" example("1234")
+// @Param user body dto.AuthLogin true "Auth object"
 // @Success 200 {object} dto.TokenResponse
+// @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /login [post]
@@ -42,11 +42,11 @@ func (h *AuthHandler) Login(c echo.Context) error {
 // @Summary Регистрация пользователя
 // @Description Выполняет регистрацию пользователя и возвращает JWT токен
 // @Tags auth
-// @Accept x-www-form-urlencoded
+// @Accept json
 // @Produce json
-// @Param username formData string true "Имя пользователя" example("admin")
-// @Param password formData string true "Пароль" example("1234")
-// @Success 200 {object} dto.TokenResponse
+// @Param user body dto.AuthLogin true "Auth object"
+// @Success 201 {object} dto.TokenResponse
+// @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /register [post]
