@@ -138,6 +138,11 @@ definitions:
       name:
         type: string
     type: object
+  dto.TokenResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -381,9 +386,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/dto.TokenResponse'
         "401":
           description: Unauthorized
           schema:
@@ -393,6 +396,42 @@ paths:
           schema:
             $ref: '#/definitions/dto.ErrorResponse'
       summary: Аутентификация пользователя
+      tags:
+      - auth
+  /register:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Выполняет регистрацию пользователя и возвращает JWT токен
+      parameters:
+      - description: Имя пользователя
+        example: '"admin"'
+        in: formData
+        name: username
+        required: true
+        type: string
+      - description: Пароль
+        example: '"1234"'
+        in: formData
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.TokenResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Регистрация пользователя
       tags:
       - auth
 securityDefinitions:

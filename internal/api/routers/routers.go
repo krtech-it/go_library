@@ -15,6 +15,7 @@ func RegisterRoutes(e *echo.Echo,
 	authHandler *authHand.AuthHandler) {
 
 	e.POST("/login", authHandler.Login)
+	e.POST("/register", authHandler.Register)
 
 	api := e.Group("/api")
 	api.Use(echojwt.WithConfig(echojwt.Config{
