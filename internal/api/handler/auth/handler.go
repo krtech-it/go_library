@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"go_library/internal/core"
 	"net/http"
 	"time"
 )
@@ -37,9 +38,9 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = username
 	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Second * 12).Unix()
+	claims["exp"] = time.Now().Add(time.Second * 40).Unix()
 
-	t, err := token.SignedString([]byte("your-secret-key"))
+	t, err := token.SignedString(core.JwtSecret)
 	if err != nil {
 		return err
 	}

@@ -23,6 +23,10 @@ import (
 // @description Это Swagger API для Go проекта
 // @host localhost:8000
 // @BasePath /
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	database, err := db.InitDB()
 	if err != nil {

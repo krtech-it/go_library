@@ -6,9 +6,8 @@ import (
 	authHand "go_library/internal/api/handler/auth"
 	authorHand "go_library/internal/api/handler/author"
 	bookHand "go_library/internal/api/handler/book"
+	"go_library/internal/core"
 )
-
-var JwtSecret = []byte("string")
 
 func RegisterRoutes(e *echo.Echo,
 	bookHandler *bookHand.BookHandler,
@@ -19,7 +18,7 @@ func RegisterRoutes(e *echo.Echo,
 
 	api := e.Group("/api")
 	api.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: JwtSecret,
+		SigningKey: core.JwtSecret,
 	}))
 
 	bookGroup := api.Group("/book")

@@ -18,6 +18,7 @@ type AuthorHandler struct {
 // @Tags authors
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Success 200 {array} dto.AuthorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/author [get]
@@ -39,6 +40,7 @@ func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
 // @Tags authors
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param id path string true "Author ID" example("123e4567-e89b-12d3-a456-426614174000")
 // @Success 200 {object} dto.AuthorFullResponse
 // @Failure 404 {object} dto.ErrorResponse

@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/api/author": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Возвращает список всех авторов",
                 "consumes": [
                     "application/json"
@@ -49,6 +54,11 @@ const docTemplate = `{
         },
         "/api/author/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Возвращает информацию об авторе по его идентификатору, включая список его книг",
                 "consumes": [
                     "application/json"
@@ -94,6 +104,11 @@ const docTemplate = `{
         },
         "/api/book": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Возвращает список всех книг с автором и мета-данными",
                 "consumes": [
                     "application/json"
@@ -124,6 +139,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Создает новую книгу в библиотеке с указанным автором",
                 "consumes": [
                     "application/json"
@@ -170,6 +190,11 @@ const docTemplate = `{
         },
         "/api/book/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Возвращает книгу по её идентификатору с информацией об авторе",
                 "consumes": [
                     "application/json"
@@ -213,6 +238,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Удаляет книгу по её ID",
                 "consumes": [
                     "application/json"
@@ -253,6 +283,11 @@ const docTemplate = `{
                 }
             },
             "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Обновляет информацию о книге по её ID",
                 "consumes": [
                     "application/json"
@@ -560,6 +595,14 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
