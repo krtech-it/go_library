@@ -97,11 +97,45 @@ definitions:
         example: "2024-03-20T10:00:00Z"
         type: string
     type: object
+  dto.BookResponseGenres:
+    properties:
+      author:
+        $ref: '#/definitions/dto.AuthorResponse'
+      count_page:
+        example: 180
+        type: integer
+      created_at:
+        example: "2024-03-20T10:00:00Z"
+        type: string
+      description:
+        example: A story of the fabulously wealthy Jay Gatsby
+        type: string
+      genres:
+        items:
+          $ref: '#/definitions/dto.GenreResponse'
+        type: array
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      title:
+        example: The Great Gatsby
+        type: string
+      updated_at:
+        example: "2024-03-20T10:00:00Z"
+        type: string
+    type: object
   dto.ErrorResponse:
     description: Error response object returned when an error occurs
     properties:
       error:
         example: Error message
+        type: string
+    type: object
+  dto.GenreResponse:
+    properties:
+      id:
+        type: string
+      name:
         type: string
     type: object
 host: localhost:8000
@@ -258,7 +292,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.BookResponse'
+            $ref: '#/definitions/dto.BookResponseGenres'
         "404":
           description: Not Found
           schema:

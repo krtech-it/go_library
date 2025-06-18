@@ -42,7 +42,7 @@ func (h *BookHandler) GetAllBooks(c echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param id path string true "Book ID" example("123e4567-e89b-12d3-a456-426614174000")
-// @Success 200 {object} dto.BookResponse
+// @Success 200 {object} dto.BookResponseGenres
 // @Failure 404 {object} dto.ErrorResponse
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/book/{id} [get]
@@ -52,7 +52,7 @@ func (h *BookHandler) GetBookByID(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get book"})
 	}
-	result := mapper.ToBookResponse(book)
+	result := mapper.ToBookResponseWithGenres(book)
 	return c.JSON(http.StatusOK, result)
 }
 

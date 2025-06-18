@@ -31,7 +31,7 @@ func (r *bookRepository) GetAllBooks() ([]models.Book, error) {
 
 func (r *bookRepository) GetBookByID(id string) (models.Book, error) {
 	var book models.Book
-	err := r.db.Preload("Author").Where(map[string]interface{}{"id": id}).Find(&book).Error
+	err := r.db.Preload("Author").Preload("Genres").Where(map[string]interface{}{"id": id}).Find(&book).Error
 	return book, err
 }
 

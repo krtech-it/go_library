@@ -28,12 +28,34 @@ func ToBookResponse(b *domainModel.Book) *dto.BookResponse {
 	}
 }
 
+func ToBookResponseWithGenres(b *domainModel.Book) *dto.BookResponseGenres {
+	genres := make([]dto.GenreResponse, 0)
+	for _, g := range b.Genres {
+		genres = append(genres, dto.GenreResponse{
+			Id:   g.Id,
+			Name: g.Name,
+		})
+	}
+	return &dto.BookResponseGenres{
+		BookResponse: *ToBookResponse(b),
+		Genres:       genres,
+	}
+}
+
 func ToBookDomain(b *gormModel.Book) *domainModel.Book {
+	genres := []domainModel.Genre{}
+	for _, genre := range b.Genres {
+		genres = append(genres, domainModel.Genre{
+			Id:   genre.Id,
+			Name: genre.Name,
+		})
+	}
 	return &domainModel.Book{
 		Id:          b.Id,
 		Title:       b.Title,
 		Description: b.Description,
 		CountPage:   b.CountPage,
+		Genres:      genres,
 		Author: domainModel.Author{
 			Id:        b.Author.Id,
 			FirstName: b.Author.FirstName,

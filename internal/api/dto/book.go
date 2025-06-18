@@ -18,6 +18,11 @@ type BookResponse struct {
 	UpdatedAt        time.Time      `json:"updated_at" example:"2024-03-20T10:00:00Z"`
 }
 
+type BookResponseGenres struct {
+	BookResponse `json:",inline"`
+	Genres       []GenreResponse `json:"genres"`
+}
+
 // BookRequest represents a book request object
 // @Description Book request object for creating or updating a book
 type BookRequest struct {

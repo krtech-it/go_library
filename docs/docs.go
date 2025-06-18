@@ -195,7 +195,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.BookResponse"
+                            "$ref": "#/definitions/dto.BookResponseGenres"
                         }
                     },
                     "404": {
@@ -446,6 +446,44 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.BookResponseGenres": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "$ref": "#/definitions/dto.AuthorResponse"
+                },
+                "count_page": {
+                    "type": "integer",
+                    "example": 180
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-03-20T10:00:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "A story of the fabulously wealthy Jay Gatsby"
+                },
+                "genres": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.GenreResponse"
+                    }
+                },
+                "id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "The Great Gatsby"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-03-20T10:00:00Z"
+                }
+            }
+        },
         "dto.ErrorResponse": {
             "description": "Error response object returned when an error occurs",
             "type": "object",
@@ -453,6 +491,17 @@ const docTemplate = `{
                 "error": {
                     "type": "string",
                     "example": "Error message"
+                }
+            }
+        },
+        "dto.GenreResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         }
