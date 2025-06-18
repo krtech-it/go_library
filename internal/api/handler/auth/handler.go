@@ -11,6 +11,18 @@ type AuthHandler struct {
 	service int
 }
 
+// Login godoc
+// @Summary Аутентификация пользователя
+// @Description Выполняет вход пользователя и возвращает JWT токен
+// @Tags auth
+// @Accept x-www-form-urlencoded
+// @Produce json
+// @Param username formData string true "Имя пользователя" example("admin")
+// @Param password formData string true "Пароль" example("1234")
+// @Success 200 {object} map[string]string
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /login [post]
 func (h *AuthHandler) Login(c echo.Context) error {
 	// Пример проверки логина
 	username := c.FormValue("username")
@@ -25,7 +37,7 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = username
 	claims["admin"] = true
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+	claims["exp"] = time.Now().Add(time.Second * 12).Unix()
 
 	t, err := token.SignedString([]byte("your-secret-key"))
 	if err != nil {

@@ -31,6 +31,7 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
 	e.Use(middleware2.ErrorMiddleware)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 

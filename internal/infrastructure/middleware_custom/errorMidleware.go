@@ -4,7 +4,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"go_library/internal/api/dto"
 	"go_library/internal/errors"
-	"net/http"
 )
 
 func ErrorMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -16,6 +15,6 @@ func ErrorMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		if apiErr, ok := err.(*errors.APIError); ok {
 			return c.JSON(apiErr.StatusCode, dto.ErrorResponse{Error: apiErr.Message})
 		}
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "internal server error"})
+		return err
 	}
 }
