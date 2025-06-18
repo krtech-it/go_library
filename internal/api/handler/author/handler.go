@@ -24,7 +24,7 @@ type AuthorHandler struct {
 func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
 	authors, err := h.service.GetAllAuthors()
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get authors"})
+		return err
 	}
 	response := make([]*dto.AuthorResponse, 0)
 	for _, value := range authors {
@@ -48,7 +48,7 @@ func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 	id := c.Param("id")
 	author, err := h.service.GetAuthorByID(id)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResponse{Error: "Could not get author"})
+		return err
 	}
 	response := mapper.FromDomainToResponseAuthorFull(author)
 	return c.JSON(http.StatusOK, response)

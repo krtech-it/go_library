@@ -11,6 +11,7 @@ import (
 	authorServ "go_library/internal/domain/author"
 	bookServ "go_library/internal/domain/book"
 	"go_library/internal/infrastructure/db"
+	middleware2 "go_library/internal/infrastructure/middleware"
 	authorRepo "go_library/internal/infrastructure/repository/author"
 	bookRepo "go_library/internal/infrastructure/repository/book"
 	"log"
@@ -28,6 +29,8 @@ func main() {
 	}
 	e := echo.New()
 	e.Use(middleware.CORS())
+	e.Use(middleware.Recover())
+	e.Use(middleware2.ErrorMiddleware)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	// Book init
