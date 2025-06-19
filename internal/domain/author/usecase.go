@@ -6,4 +6,5 @@ type AuthorService interface {
 	GetAllAuthors() ([]*domainModel.Author, error)
 	GetAuthorByID(id string) (*domainModel.Author, error)
 	CreateAuthor(author *domainModel.Author, userId string) error
+	UpdateAuthor(author *domainModel.Author, userId string) error
 }

@@ -87,6 +87,35 @@ func (h *AuthorHandler) CreateAuthor(c echo.Context) error {
 	return c.NoContent(http.StatusCreated)
 }
 
+// UpdateAuthor godoc
+// @Summary Обновить автора
+// @Description Обновление автора. Требуется авторизация.
+// @Tags authors
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param author body dto.AuthorRequest true "Данные автора"
+// @Success 201 "Автор успешно обновлен"
+// @Failure 400 {object} dto.ErrorResponse
+// @Failure 401 {object} dto.ErrorResponse
+// @Failure 500 {object} dto.ErrorResponse
+// @Router /api/author [patch]
+func (h *AuthorHandler) UpdateAuthor(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := claims["user_id"].(string)
+	var req dto.AuthorRequest
+	if err := c.Bind(&req); err != nil {
+		return ApiError.NewAPIError(http.StatusBadRequest, "invalid data")
+	}
+	domainAuthor := mapper.FromRequestToDomainAuthor(&req)
+	err := h.service.UpdateAuthor(domainAuthor, userID)
+	if err != nil {
+		return err
+	}
+	return c.NoContent(http.StatusAccepted)
+}
+
 func NewAuthorHandler(service author.AuthorService) *AuthorHandler {
 	return &AuthorHandler{service: service}
 }

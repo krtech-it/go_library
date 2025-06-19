@@ -33,4 +33,5 @@ func RegisterRoutes(e *echo.Echo,
 	authorGroup.GET("", authorHandler.GetAllAuthors)
 	authorGroup.GET("/:id", authorHandler.GetAuthorByID)
 	authorGroup.POST("", authorHandler.CreateAuthor)
+	authorGroup.PATCH("", authorHandler.UpdateAuthor)
 }

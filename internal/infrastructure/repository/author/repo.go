@@ -11,6 +11,7 @@ type AuthorRepository interface {
 	GetUser(id string) (*models.User, error)
 	CreateAuthor(author *models.Author) error
 	JoinAuthorUser(authorId, userId string) error
+	UpdateAuthor(author *models.Author) error
 }
 
 type authorRepository struct {
@@ -41,6 +42,10 @@ func (r *authorRepository) CreateAuthor(author *models.Author) error {
 
 func (r *authorRepository) JoinAuthorUser(userId string, authorId string) error {
 	return r.db.Model(models.User{}).Where(map[string]string{"id": userId}).Update("author_id", authorId).Error
+}
+
+func (r *authorRepository) UpdateAuthor(author *models.Author) error {
+	return r.db.Model(models.Author{}).Where(map[string]string{"id": author.Id}).Updates(author).Error
 }
 
 func NewAuthorRepository(db *gorm.DB) AuthorRepository {

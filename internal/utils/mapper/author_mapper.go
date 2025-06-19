@@ -64,7 +64,5 @@ func FromDomainToGormAuthor(author *domainModel.Author) *gormModel.Author {
 		Id:        author.Id,
 		FirstName: author.FirstName,
 		LastName:  author.LastName,
-		CreatedAt: author.CreatedAt,
-		UpdatedAt: author.UpdatedAt,
 	}
 }

@@ -189,6 +189,39 @@ paths:
       summary: Получить всех авторов
       tags:
       - authors
+    patch:
+      consumes:
+      - application/json
+      description: Обновление автора. Требуется авторизация.
+      parameters:
+      - description: Данные автора
+        in: body
+        name: author
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AuthorRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Автор успешно обновлен
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Обновить автора
+      tags:
+      - authors
     post:
       consumes:
       - application/json

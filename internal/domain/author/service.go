@@ -7,6 +7,7 @@ import (
 	autorRepo "go_library/internal/infrastructure/repository/author"
 	"go_library/internal/utils/mapper"
 	"net/http"
+	"time"
 )
 
 type authorService struct {
@@ -53,6 +54,20 @@ func (s *authorService) CreateAuthor(author *domainModel.Author, userId string) 
 		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not join author")
 	}
 	return nil
+}
+
+func (s *authorService) UpdateAuthor(author *domainModel.Author, userId string) error {
+	gormUser, err := s.repo.GetUser(userId)
+	if err != nil {
+		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
+	}
+	if gormUser.AuthorID == nil {
+		return ApiError.NewAPIError(http.StatusForbidden, "У пользователя еще нет автора")
+	}
+	gormAuthor := mapper.FromDomainToGormAuthor(author)
+	gormAuthor.Id = *gormUser.AuthorID
+	gormAuthor.UpdatedAt = time.Now()
+	return s.repo.UpdateAuthor(gormAuthor)
 }
 
 func NewAuthorService(repo autorRepo.AuthorRepository) AuthorService {
