@@ -82,8 +82,5 @@ func FromRequestToDomainBook(b *dto.BookRequest) *domainModel.Book {
 		Title:       b.Title,
 		Description: b.Description,
 		CountPage:   b.CountPage,
-		Author: domainModel.Author{
-			Id: b.AuthorID,
-		},
 	}
 }

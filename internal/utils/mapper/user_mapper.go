@@ -11,6 +11,7 @@ func FromGormToDomainUser(user *gormModel.User) *domainModel.User {
 		Username:  user.Username,
 		Password:  user.Password,
 		Admin:     user.Admin,
+		AuthorID:  user.AuthorID,
 		FirstName: user.Author.FirstName,
 		LastName:  user.Author.LastName,
 		CreatedAt: user.CreatedAt,

@@ -23,13 +23,17 @@ type BookResponseGenres struct {
 	Genres       []GenreResponse `json:"genres"`
 }
 
+type BookResponsePagination struct {
+	PageStruct `json:",inline"`
+	Books      []*BookResponse `json:"books"`
+}
+
 // BookRequest represents a book request object
 // @Description Book request object for creating or updating a book
 type BookRequest struct {
 	Title       string `json:"title" binding:"required" example:"The Great Gatsby"`
 	Description string `json:"description" binding:"required" example:"A story of the fabulously wealthy Jay Gatsby"`
 	CountPage   uint64 `json:"count_page" binding:"required" example:"180"`
-	AuthorID    string `json:"author_id" binding:"required" example:"123e4567-e89b-12d3-a456-426614174000"`
 }
 
 // BookIdResponse represents a book ID response object

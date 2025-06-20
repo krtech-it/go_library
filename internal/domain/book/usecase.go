@@ -5,9 +5,9 @@ import (
 )
 
 type BookService interface {
-	GetAllBooks() ([]*models.Book, error)
+	GetAllBooks(page, pageSize int) ([]*models.Book, int, error)
 	GetBookByID(id string) (*models.Book, error)
-	CreateBook(book *models.Book) (string, error)
+	CreateBook(book *models.Book, userId string) (string, error)
 	UpdateBook(id string, book *models.Book) (string, error)
 	DeleteBook(id string) error
 }

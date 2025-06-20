@@ -1,13 +1,14 @@
 package book
 
 import (
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 	"go_library/internal/api/dto"
 	"go_library/internal/domain/book"
 	ApiError "go_library/internal/errors"
 	"go_library/internal/utils/mapper"
 	"net/http"
+	"strconv"
 )
 
 type BookHandler struct {
@@ -25,14 +26,29 @@ type BookHandler struct {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/book [get]
 func (h *BookHandler) GetAllBooks(c echo.Context) error {
-	log.Info("Get all books")
-	books, err := h.service.GetAllBooks()
+	page, err := strconv.Atoi(c.QueryParam("page"))
+	if err != nil {
+		return ApiError.NewAPIError(http.StatusBadRequest, "page param is invalid")
+	}
+	pageSize, err := strconv.Atoi(c.QueryParam("size"))
+	if err != nil {
+		return ApiError.NewAPIError(http.StatusBadRequest, "size param is invalid")
+	}
+	books, count, err := h.service.GetAllBooks(page, pageSize)
 	if err != nil {
 		return err
 	}
-	response := make([]*dto.BookResponse, 0)
+	booksDto := make([]*dto.BookResponse, 0)
 	for _, value := range books {
-		response = append(response, mapper.ToBookResponse(value))
+		booksDto = append(booksDto, mapper.ToBookResponse(value))
+	}
+	response := &dto.BookResponsePagination{
+		PageStruct: dto.PageStruct{
+			Page:     page,
+			PageSize: pageSize,
+			Count:    count,
+		},
+		Books: booksDto,
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -72,12 +88,15 @@ func (h *BookHandler) GetBookByID(c echo.Context) error {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/book [post]
 func (h *BookHandler) CreateBook(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(jwt.MapClaims)
+	userID := claims["user_id"].(string)
 	var req dto.BookRequest
 	if err := c.Bind(&req); err != nil {
 		return ApiError.NewAPIError(http.StatusBadRequest, "internal server error")
 	}
 	domainBook := mapper.FromRequestToDomainBook(&req)
-	bookId, err := h.service.CreateBook(domainBook)
+	bookId, err := h.service.CreateBook(domainBook, userID)
 	if err != nil {
 		return err
 	}

@@ -14,17 +14,18 @@ type bookService struct {
 	repo bookRepo.BookRepository
 }
 
-func (s *bookService) GetAllBooks() ([]*domainModel.Book, error) {
-	books, err := s.repo.GetAllBooks()
+func (s *bookService) GetAllBooks(page, pageSize int) ([]*domainModel.Book, int, error) {
+	books, err := s.repo.GetAllBooks(page, pageSize)
 	if err != nil {
-		return nil, ApiError.NewAPIError(http.StatusInternalServerError, "Could not get books")
+		return nil, 0, ApiError.NewAPIError(http.StatusInternalServerError, "Could not get books")
 	}
+	count, _ := s.repo.GetCountBooks()
 	// Convert models to schemas
 	result := make([]*domainModel.Book, 0)
 	for _, book := range books {
 		result = append(result, mapper.ToBookDomain(&book))
 	}
-	return result, nil
+	return result, count, nil
 }
 
 func (s *bookService) GetBookByID(id string) (*domainModel.Book, error) {
@@ -36,7 +37,13 @@ func (s *bookService) GetBookByID(id string) (*domainModel.Book, error) {
 	return result, nil
 }
 
-func (s *bookService) CreateBook(book *domainModel.Book) (string, error) {
+func (s *bookService) CreateBook(book *domainModel.Book, userId string) (string, error) {
+	gormUser, err := s.repo.GetUser(userId)
+	user := mapper.FromGormToDomainUser(gormUser)
+	if user.AuthorID == nil {
+		return "", ApiError.NewAPIError(http.StatusConflict, "User not have author")
+	}
+	book.Author = domainModel.Author{Id: *user.AuthorID}
 	bookModel := mapper.FromDomainToBookModel(book)
 	bookModel.Id = uuid.NewString()
 	if err := s.repo.CheckAuthorByID(bookModel.AuthorID); err != nil {
@@ -45,7 +52,7 @@ func (s *bookService) CreateBook(book *domainModel.Book) (string, error) {
 	if err := s.repo.CheckBookName(bookModel.Title); err == nil {
 		return bookModel.Id, ApiError.NewAPIError(http.StatusConflict, "Book already exists")
 	}
-	err := s.repo.CreateBook(bookModel)
+	err = s.repo.CreateBook(bookModel)
 	if err != nil {
 		return bookModel.Id, ApiError.NewAPIError(http.StatusInternalServerError, "internal server error")
 	}
