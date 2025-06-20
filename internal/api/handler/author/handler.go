@@ -1,12 +1,13 @@
 package author
 
 import (
-	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"go_library/internal/api/dto"
+	"go_library/internal/api/handler"
+	"go_library/internal/api/mapper/fromDto"
+	"go_library/internal/api/mapper/toDto"
 	"go_library/internal/domain/author"
 	ApiError "go_library/internal/errors"
-	"go_library/internal/utils/mapper"
 	"net/http"
 )
 
@@ -31,7 +32,7 @@ func (h *AuthorHandler) GetAllAuthors(c echo.Context) error {
 	}
 	response := make([]*dto.AuthorResponse, 0)
 	for _, value := range authors {
-		response = append(response, mapper.FromDomainToResponseAuthor(value))
+		response = append(response, toDto.ToDtoAuthor(value))
 	}
 	return c.JSON(http.StatusOK, response)
 }
@@ -54,7 +55,7 @@ func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	response := mapper.FromDomainToResponseAuthorFull(authorObj)
+	response := toDto.ToDtoAuthorWithBooks(authorObj)
 	return c.JSON(http.StatusOK, response)
 }
 
@@ -72,14 +73,12 @@ func (h *AuthorHandler) GetAuthorByID(c echo.Context) error {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/author [post]
 func (h *AuthorHandler) CreateAuthor(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
+	userID := handler.GetUserId(c)
 	var req dto.AuthorRequest
 	if err := c.Bind(&req); err != nil {
 		return ApiError.NewAPIError(http.StatusBadRequest, "invalid data")
 	}
-	domainAuthor := mapper.FromRequestToDomainAuthor(&req)
+	domainAuthor := fromDto.FromDtoAuthor(&req)
 	err := h.service.CreateAuthor(domainAuthor, userID)
 	if err != nil {
 		return err
@@ -101,14 +100,12 @@ func (h *AuthorHandler) CreateAuthor(c echo.Context) error {
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /api/author [patch]
 func (h *AuthorHandler) UpdateAuthor(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(jwt.MapClaims)
-	userID := claims["user_id"].(string)
+	userID := handler.GetUserId(c)
 	var req dto.AuthorRequest
 	if err := c.Bind(&req); err != nil {
 		return ApiError.NewAPIError(http.StatusBadRequest, "invalid data")
 	}
-	domainAuthor := mapper.FromRequestToDomainAuthor(&req)
+	domainAuthor := fromDto.FromDtoAuthor(&req)
 	err := h.service.UpdateAuthor(domainAuthor, userID)
 	if err != nil {
 		return err

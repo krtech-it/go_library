@@ -4,8 +4,9 @@ import (
 	"github.com/google/uuid"
 	domainModel "go_library/internal/domain/models"
 	ApiError "go_library/internal/errors"
+	"go_library/internal/infrastructure/db/mapper/fromDb"
+	"go_library/internal/infrastructure/db/mapper/toDb"
 	bookRepo "go_library/internal/infrastructure/repository/book"
-	"go_library/internal/utils/mapper"
 	"net/http"
 	"time"
 )
@@ -23,7 +24,7 @@ func (s *bookService) GetAllBooks(page, pageSize int) ([]*domainModel.Book, int,
 	// Convert models to schemas
 	result := make([]*domainModel.Book, 0)
 	for _, book := range books {
-		result = append(result, mapper.ToBookDomain(&book))
+		result = append(result, fromDb.FromDbBook(&book))
 	}
 	return result, count, nil
 }
@@ -33,18 +34,21 @@ func (s *bookService) GetBookByID(id string) (*domainModel.Book, error) {
 	if err != nil {
 		return nil, ApiError.NewAPIError(http.StatusNotFound, "Could not get book")
 	}
-	result := mapper.ToBookDomain(&book)
+	result := fromDb.FromDbBook(&book)
 	return result, nil
 }
 
 func (s *bookService) CreateBook(book *domainModel.Book, userId string) (string, error) {
 	gormUser, err := s.repo.GetUser(userId)
-	user := mapper.FromGormToDomainUser(gormUser)
-	if user.AuthorID == nil {
+	if err != nil {
+		return "", ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
+	}
+	domainUser := fromDb.FromDbUser(gormUser)
+	if domainUser.AuthorID == nil {
 		return "", ApiError.NewAPIError(http.StatusConflict, "User not have author")
 	}
-	book.Author = domainModel.Author{Id: *user.AuthorID}
-	bookModel := mapper.FromDomainToBookModel(book)
+	book.Author = domainModel.Author{Id: *domainUser.AuthorID}
+	bookModel := toDb.ToDbBook(book)
 	bookModel.Id = uuid.NewString()
 	if err := s.repo.CheckAuthorByID(bookModel.AuthorID); err != nil {
 		return bookModel.Id, ApiError.NewAPIError(http.StatusBadRequest, "author not exist")
@@ -59,12 +63,24 @@ func (s *bookService) CreateBook(book *domainModel.Book, userId string) (string,
 	return bookModel.Id, nil
 }
 
-func (s *bookService) UpdateBook(id string, book *domainModel.Book) (string, error) {
+func (s *bookService) UpdateBook(id string, book *domainModel.Book, userId string) (string, error) {
+	gormUser, err := s.repo.GetUser(userId)
+	if err != nil {
+		return "", ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
+	}
+	domainUser := fromDb.FromDbUser(gormUser)
 	bookDB, err := s.repo.GetBookByID(id)
 	if err != nil {
 		return id, ApiError.NewAPIError(http.StatusNotFound, "Book not found")
 	}
-	bookModel := mapper.FromDomainToBookModel(book)
+	if domainUser.AuthorID == nil {
+		return "", ApiError.NewAPIError(http.StatusConflict, "User not have author")
+	}
+	if *domainUser.AuthorID != bookDB.AuthorID {
+		return "", ApiError.NewAPIError(http.StatusForbidden, "User not author")
+	}
+	book.Author.Id = *domainUser.AuthorID
+	bookModel := toDb.ToDbBook(book)
 	bookModel.UpdatedAt = time.Time{}
 	if err := s.repo.CheckAuthorByID(bookModel.AuthorID); err != nil {
 		return id, ApiError.NewAPIError(http.StatusBadRequest, "author not exist")

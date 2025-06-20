@@ -3,13 +3,13 @@ package models
 import "time"
 
 type User struct {
-	Id        string `json:"id"`
-	Username  string `json:"username"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Admin     bool   `json:"admin"`
+	Id        string
+	Username  string
+	FirstName string
+	LastName  string
+	Admin     bool
 	AuthorID  *string
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Password  string
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

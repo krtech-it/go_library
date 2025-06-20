@@ -5,3 +5,8 @@ type PageStruct struct {
 	PageSize int `json:"page_size" example:"10"`
 	Count    int `json:"count" example:"0"`
 }
+
+type BookResponsePagination[T any] struct {
+	PageStruct `json:",inline"`
+	Items      []*T `json:"items"`
+}

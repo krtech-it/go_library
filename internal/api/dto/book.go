@@ -23,11 +23,6 @@ type BookResponseGenres struct {
 	Genres       []GenreResponse `json:"genres"`
 }
 
-type BookResponsePagination struct {
-	PageStruct `json:",inline"`
-	Books      []*BookResponse `json:"books"`
-}
-
 // BookRequest represents a book request object
 // @Description Book request object for creating or updating a book
 type BookRequest struct {

@@ -4,8 +4,9 @@ import (
 	"github.com/google/uuid"
 	domainModel "go_library/internal/domain/models"
 	ApiError "go_library/internal/errors"
+	"go_library/internal/infrastructure/db/mapper/fromDb"
+	"go_library/internal/infrastructure/db/mapper/toDb"
 	autorRepo "go_library/internal/infrastructure/repository/author"
-	"go_library/internal/utils/mapper"
 	"net/http"
 	"time"
 )
@@ -21,7 +22,7 @@ func (s *authorService) GetAllAuthors() ([]*domainModel.Author, error) {
 	}
 	result := make([]*domainModel.Author, 0)
 	for _, author := range authors {
-		result = append(result, mapper.FromGormToDomainAuthor(&author))
+		result = append(result, fromDb.FromDbAuthor(&author))
 	}
 	return result, nil
 }
@@ -31,7 +32,7 @@ func (s *authorService) GetAuthorByID(id string) (*domainModel.Author, error) {
 	if err != nil {
 		return nil, ApiError.NewAPIError(http.StatusNotFound, "Could not get author")
 	}
-	result := mapper.FromGormToDomainAuthor(author)
+	result := fromDb.FromDbAuthor(author)
 	return result, nil
 }
 
@@ -40,10 +41,11 @@ func (s *authorService) CreateAuthor(author *domainModel.Author, userId string) 
 	if err != nil {
 		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
 	}
-	if gormUser.AuthorID != nil {
+	domainUser := fromDb.FromDbUser(gormUser)
+	if domainUser.AuthorID != nil {
 		return ApiError.NewAPIError(http.StatusForbidden, "Пользователь уже создал автора")
 	}
-	gormAuthor := mapper.FromDomainToGormAuthor(author)
+	gormAuthor := toDb.ToDbAuthor(author)
 	gormAuthor.Id = uuid.NewString()
 	err = s.repo.CreateAuthor(gormAuthor)
 	if err != nil {
@@ -61,11 +63,12 @@ func (s *authorService) UpdateAuthor(author *domainModel.Author, userId string) 
 	if err != nil {
 		return ApiError.NewAPIError(http.StatusInternalServerError, "Could not get user")
 	}
-	if gormUser.AuthorID == nil {
+	domainUser := fromDb.FromDbUser(gormUser)
+	if domainUser.AuthorID == nil {
 		return ApiError.NewAPIError(http.StatusForbidden, "У пользователя еще нет автора")
 	}
-	gormAuthor := mapper.FromDomainToGormAuthor(author)
-	gormAuthor.Id = *gormUser.AuthorID
+	gormAuthor := toDb.ToDbAuthor(author)
+	gormAuthor.Id = *domainUser.AuthorID
 	gormAuthor.UpdatedAt = time.Now()
 	return s.repo.UpdateAuthor(gormAuthor)
 }

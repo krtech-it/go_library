@@ -6,9 +6,9 @@ import (
 	"go_library/internal/core"
 	"go_library/internal/domain/models"
 	ApiError "go_library/internal/errors"
+	"go_library/internal/infrastructure/db/mapper/fromDb"
 	modelGorm "go_library/internal/infrastructure/db/models"
 	authRepo "go_library/internal/infrastructure/repository/auth"
-	"go_library/internal/utils/mapper"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
@@ -23,7 +23,7 @@ func (s *authService) Login(username, password string) (string, error) {
 	if err != nil {
 		return "", ApiError.NewAPIError(http.StatusNotFound, "Could not get user")
 	}
-	user := mapper.FromGormToDomainUser(userGorm)
+	user := fromDb.FromDbUser(userGorm)
 	if !s.checkPassword(password, user.Password) {
 		return "", ApiError.NewAPIError(http.StatusUnauthorized, "Invalid username or password")
 	}
